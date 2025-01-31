@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv = "Content-Type" content = "text / html; charset = utf-8" />
+    <title>Create Blogpost</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<style>
+    form {
+        width: 80%;
+    }
+</style>
+<body>
+    <form method = "post" action = ".">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <p> <input type="submit" value="Create Post"> </p>
+    </form>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentListener', () => {
+            window.onload = function() {
+                var textarea = document.getElementsByTagName('textarea')[0];
+                textarea.classList.add('.textarea')
+                var md = new MDeditor('.textarea');
+
+                let body = document.getElementsByName('body')[0];
+                body.style.gridTemplateColumns = 'none';
+            };
+        })
+    </script>
+    <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.style.grid = 'none';
+            })
+    </script>
+</body>
+</html>

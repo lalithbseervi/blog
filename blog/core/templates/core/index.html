@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Digital Mind</title>
+        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    </head>
+    <body>
+        {% block page_title %}
+            <header><h3>Posts | <a href="{% url 'createBlogPost' %}">Create Post</a></h3></header>
+        {% endblock %}
+
+        <main>
+        {% block post_list %}
+            {% block posts %}
+                {% for post in posts %}
+                    <div class="post">
+                        <h3><a href="{% url 'viewBlog' post.pk %}">{{ post.title }}</a></h3>
+                        <small>
+                            {{ post.created_on.date }} | Categories:
+                            {% for category in post.categories.all %}
+                                <a href="{% url 'viewBlogByCategory' category.name %}"> {{ category.name }}</a> |
+                            {% endfor %} <a href="{{ share_link }}">Share</a>
+                        </small>
+                        <p>{{ post.body | slice:":10" | safe }}...</p>
+                    </div>
+                {% endfor %}
+            {% endblock posts %}
+        {% endblock post_list %}
+        </main>
+    </body>
+</html>

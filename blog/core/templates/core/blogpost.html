@@ -1,0 +1,18 @@
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+
+{% block page_title %}
+    <h2>{{ title }}</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+    <small>
+        {{ created_on }} | Categories:
+        {% for category in categories %}
+            <a href="{% url 'viewBlogByCategory' category %}">{{ category }}</a>
+        {% endfor %} | <a href="{% url 'editBlogPost' pk %}">Edit</a> | <a href="{% url 'deleteBlogPost' pk %}">Delete</a> | <a href="{{ share_link }}">Share</a>
+    </small>
+    <p>{{ body|safe}}</p>
+{% endblock page_content %}
