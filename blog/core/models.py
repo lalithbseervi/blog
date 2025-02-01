@@ -5,6 +5,11 @@ from django.urls import reverse
 # Create your models here.
 import uuid
 
+choices = {
+    True: 'true',
+    False: 'false'
+}
+
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -21,6 +26,7 @@ class BlogPost(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField("Category", related_name="blogposts")
     share_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    password_protect = models.BooleanField(default=False, choices=choices)
 
     def __str__(self):
         return self.title

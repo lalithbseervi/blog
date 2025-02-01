@@ -48,7 +48,14 @@ def viewBlogByID(request, pk):
         'body': blogpost.body,
         'pk': blogpost.pk
     }
+
+    if blogpost.password_protect:
+        if request.user.is_superuser == False:
+            return render(request, 'core/404.html')
+        else:
+            return render(request, 'core/blogpost.html', context)
     return render(request, 'core/blogpost.html', context)
+    
 
 def create_post(request):
     cookie = request.COOKIES.get('invalid')
