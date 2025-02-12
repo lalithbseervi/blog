@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,36 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv = "Content-Type" content = "text / html; charset = utf-8" />
     <title>Create Blogpost</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="{% static 'simple.css' %}">
+    <script type="text/javascript" src="{% static 'tinymce/tinymce.min.js' %}"></script>
 </head>
 <style>
-    form {
-        width: 80%;
+    .mce-container {
+        max-width: 100%;      /* Prevent the editor from going beyond the container */
+        width: 100%;          /* Make sure it fills the available space */
+        height: auto;         /* Let the height adjust based on content */
+    }
+
+    /* Optional: Adjust height based on screen size */
+    @media (max-width: 768px) {
+        .mce-container {
+            height: 300px;  /* Adjust height for smaller screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mce-container {
+            height: 250px;  /* Further adjust for very small screens */
+        }
     }
 </style>
 <body>
     <form method = "post" action = ".">
         {% csrf_token %}
-        {{ form.media }}
         {{ form.as_p }}
+        {{ form.media }}
         <p> <input type="submit" value="Create Post"> </p>
     </form>
-    <script type="text/javascript">
-        document.addEventListener('DOMContentListener', () => {
-            window.onload = function() {
-                var textarea = document.getElementsByTagName('textarea')[0];
-                textarea.classList.add('.textarea')
-                var md = new MDeditor('.textarea');
-
-                let body = document.getElementsByName('body')[0];
-                body.style.gridTemplateColumns = 'none';
-            };
-        })
-    </script>
-    <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', () => {
-                document.body.style.grid = 'none';
-            })
-    </script>
 </body>
 </html>

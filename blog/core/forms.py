@@ -1,27 +1,22 @@
 from django import forms
-from mdeditor.fields import MDTextFormField, MDTextField
 from .models import BlogPost, Category
-from ckeditor.widgets import CKEditorWidget
+from tinymce.widgets import TinyMCE
+from django.contrib.flatpages.models import FlatPage
 
-# class createBlogPost(forms.Form):
-#     title = forms.CharField()
-#     body = MDTextFormField()
-#     categories = forms.CheckboxSelectMultiple(choices=category_choices)
-
-# class BlogPostForm(forms.ModelForm):
-#     class Meta:
-#         model = BlogPost
-#         fields = ['title', 'body', 'categories']
-#         categories = forms.ChoiceField(choices=BlogPost.CategoryChoices.choices, widget=forms.Select())
+class FlatPageForm(forms.ModelForm):
+    class Meta:
+        model = FlatPage
+        widgets = {'content': TinyMCE(attrs={'cols': 80, 'rows': 50})}
+        fields = ['content']
 
 class BlogPostForm(forms.ModelForm):
+    body = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+
     categories = forms.ModelMultipleChoiceField(
         queryset=Category.objects.all(),
-        widget=forms.CheckboxSelectMultiple,  # This renders checkboxes for multiple selections
-        required=False  # You can make it required or optional depending on your needs
+        widget=forms.CheckboxSelectMultiple, 
+        required=False 
     )
-
-    body = forms.CharField(widget=CKEditorWidget())
 
     class Meta:
         model = BlogPost

@@ -1,66 +1,132 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import BlogPost, Category
 from .forms import BlogPostForm
+from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
+from django.db.models import Q
+
+from functools import wraps
+
 # Create your views here.
+def superuser(view):
+    @wraps(view)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return error403(request, exception=HttpResponseForbidden)
+        return view(request, *args, **kwargs)
+    return _wrapped_view
 
 def access(request):
     return render(request, 'core/terminal.html')
 
-"""List all the blog posts on the homepage."""
-def index(request):
-    code = request.GET.get('ref')
-    if code == '512800' or request.COOKIES.get('invalid') == 'false':
-        posts = BlogPost.objects.all().order_by("-created_on")
-        response = render(request, 'core/index.html', {"posts": posts})
-        response.set_cookie('invalid', 'false')
-        return response
+def fetch(request):
+    codes = {
+        '512800': {
+            'template': 'core/111111.html',
+            'context': {
+                'name': 'Sir',
+                'IP': request.META.get('HTTP_X_FORWARDED_FOR', 'N/A'),
+                'u_agent': request.META.get('HTTP_USER_AGENT', 'N/A'),
+            }
+        },
+    }
+
+    code = request.GET.get('code_inp')
+
+    if code in codes:
+        template = codes[code]['template']
+        context = codes[code]['context']
+        return render(request, template, context)
     else:
-        response = render(request, 'core/404.html')
-        response.set_cookie('invalid', 'true')
+        context = {
+            'IP': request.META.get('HTTP_X_FORWARDED_FOR', 'N/A'),
+        }
+        return render(request, 'core/terminal.html', context)
+
+class BlogPostService:
+    @staticmethod
+    def getPosts(user: User) -> list:
+        if user.is_superuser:
+            return BlogPost.objects.all()
+        else:
+            return BlogPost.objects.filter(password_protect=False)
+    
+    @staticmethod
+    def getPostsByCategory(user: User, category: Category) -> list:
+        if user.is_superuser:
+            posts = BlogPost.objects.filter(
+                Q(categories__name__icontains=category)
+            )
+        else:
+            posts = BlogPost.objects.filter(
+                Q(password_protect=False) &
+                Q(categories__name__icontains=category)
+            )
+        return posts.order_by("-created_on")
+
+class BlogDetail:
+    @staticmethod
+    def getBlogDetailAdminView(request, slug):
+        post = get_object_or_404(BlogPost, slug=slug)
+        if post.password_protect:
+            if request.user.is_superuser:
+                pass
+            else:
+                return error403(request, exception=HttpResponseForbidden)
+        response = {
+            'title': post.title,
+            'share_link': post.get_share_url(),
+            'categories': post.categories.all(),
+            'created_on': post.created_on,
+            'last_modified': post.last_modified,
+            'body': post.body,
+            'slug': post.slug,
+            'req_toc': post.require_table_of_contents
+        }
+        return response
+    
+    @staticmethod
+    def getBlogDetailShareView(uuid):
+        post = get_object_or_404(BlogPost, share_token=uuid)
+        
+        response = {
+            'title': post.title,
+            'categories': post.categories.all(),
+            'created_on': post.created_on.date,
+            'last_modified': post.last_modified,
+            'body': post.body,
+            'req_toc': post.require_table_of_contents
+        }
+
         return response
 
-"""Find posts by category"""
+def index(request):    
+    posts = BlogPostService.getPosts(request.user)
+
+    context = {"posts": posts}
+
+    response = render(request, 'core/index.html', context)
+    return response
+
 def viewBlogByCategory(request, category):
-    cookie = request.COOKIES.get('invalid')
-
-    if cookie == 'true':
-        render(request, 'core/404.html')
-
-    posts = BlogPost.objects.filter(categories__name__contains=category).order_by("-created_on")
+    posts = BlogPostService.getPostsByCategory(request.user, category)
     context = {
         "category": category,
         "posts": posts,
     }
+
     return render(request, 'core/category.html', context)
 
-"""View particular blog post"""
-def viewBlogByID(request, pk):
-    cookie = request.COOKIES.get('invalid')
-    if cookie == 'true':
-        render(request, 'core/404.html')
-    
-    blogpost = BlogPost.objects.get(pk=pk)
-    context = {
-        'title': blogpost.title,
-        'share_link': blogpost.get_share_url(),
-        'categories': blogpost.categories.all(),
-        'created_on': blogpost.created_on.date,
-        'body': blogpost.body,
-        'pk': blogpost.pk
-    }
+def viewBlog(request, slug):
+    context = BlogDetail.getBlogDetailAdminView(request, slug)
 
-    if blogpost.password_protect:
-        if request.user.is_superuser == False:
-            return render(request, 'core/404.html')
-        else:
-            return render(request, 'core/blogpost.html', context)
-    return render(request, 'core/blogpost.html', context)
-    
+    if context == False:
+        return render(request, 'core/404.html')
+    else:
+        return render(request, 'core/blogpost.html', context)
 
+@superuser
 def create_post(request):
-    cookie = request.COOKIES.get('invalid')
-    if cookie == 'true':
-        render(request, 'core/404.html')
     if request.method == "POST":
         form = BlogPostForm(request.POST)
 
@@ -71,29 +137,33 @@ def create_post(request):
         form = BlogPostForm()
     return render(request, 'core/create_post.html', {'form': form})
 
-def edit_post(request, pk):
-    blogpost = get_object_or_404(BlogPost, pk=pk)
+@superuser
+def edit_post(request, slug):
+    blogpost = get_object_or_404(BlogPost, slug=slug)
 
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES, instance=blogpost)
         if form.is_valid():
-            form.save()  
-            return redirect('viewBlog', pk=blogpost.id)  
-    else:
-        form = BlogPostForm(instance=blogpost)
+            form.save()
+            return redirect('viewBlog', slug=blogpost.slug)
+        else:
+            form = BlogPostForm(instance=blogpost)
+        return render(request, 'core/edit_post.html', {'form': form, 'blog_post': blogpost})
+    form = BlogPostForm(instance=blogpost)
     return render(request, 'core/edit_post.html', {'form': form, 'blog_post': blogpost})
 
-def delete_post(request, pk):
-    blogpost = get_object_or_404(BlogPost, pk=pk)
+@superuser
+def delete_post(slug):
+    blogpost = get_object_or_404(BlogPost, slug=slug)
     blogpost.delete()
     return redirect('index')
 
-def share(request, token):
-    blogpost = get_object_or_404(BlogPost, share_token=token)
-    context = {
-        'title': blogpost.title,
-        'categories': blogpost.categories.all(),
-        'created_on': blogpost.created_on.date,
-        'body': blogpost.body,
-    }
+def share(request, uuid):
+    context = BlogDetail.getBlogDetailShareView(uuid)
     return render(request, 'core/share_blog.html', context)
+
+def error403(request, exception):
+    return render(request, 'core/403.html')
+
+def error404(request, exception):
+    return render(request, 'core/404.html')

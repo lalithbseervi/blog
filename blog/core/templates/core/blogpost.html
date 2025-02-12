@@ -1,35 +1,99 @@
-{% load social_share %}
-{% add_copy_script %}
-
+{% load static %}
 <head>
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <meta name='robots' content='noindex,follow' />
+    <link rel="stylesheet" href="{% static 'simple.css' %}">
+    {% if req_toc %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% endif %}
 </head>
 
 <style>
-    .inline {
-        display: flex;
-        justify-content: space-between;
-        width: 38%;
-        text-decoration: underline;
-        text-decoration-color: #ffb300;
+    main {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    p.small {
+        font-size: 1.1rem;
+    }
+
+    @media screen and (min-width: 280px) {
+        p.small {
+            font-size: 1.45rem;
+        }
     }
 </style>
 {% block page_title %}
-    <h2>{{ title }}</h2>
+    <header>
+        <h2>{{ title }}</h2>
 {% endblock page_title %}
 
 {% block page_content %}
-    <small>
-        {{ created_on }} | Categories:
-        {% for category in categories %}
-            <a href="{% url 'viewBlogByCategory' category %}">{{ category }}</a>
-        {% endfor %} |
-        <a href="{% url 'editBlogPost' pk %}">Edit</a> |
-        <a href="{% url 'deleteBlogPost' pk %}">Delete</a>
-        <div class="inline">
-            {% post_to_whatsapp share_link "Share via Whatsapp" %}{% copy_to_clipboard share_link "Copy to clipboard!" %}
-        </div>
-    </small>
-    <p>{{ body|safe}}</p>
+        <p class="small">
+            {{ created_on }} | Last Updated: {{ last_modified }} </br>
+            {% for category in categories %}
+                <a href="{% url 'viewBlogByCategory' category %}">{{ category }}</a> |
+            {% endfor %}</br>
+                {% if request.user.is_superuser %}
+                <a href="{% url 'editBlogPost' slug %}">Edit</a> |
+                <a href="{% url 'deleteBlogPost' slug %}">Delete</a> |
+                <a href="{{ share_link }}">Share</a>
+                {% endif %}
+        </p>
+    </header>
+    <main>
+        <div class="prepend"></div>
+        {% if req_toc %}
+            <style>
+                .table-of-contents ul {
+                    padding: 0;
+                }
+
+                .table-of-contents li {
+                    margin: 0 0 0.25em 0;
+                    margin-left: 2.5em;
+                }
+
+                .table-of-contents a {
+                    text-decoration: none;
+                }
+
+                .table-of-contents a:hover,
+                .table-of-contents a:active {
+                    text-decoration: underline;
+                }
+            </style>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', () => {
+                    var ToC = "<nav role='navigation' class='table-of-contents'>" +
+                "<h4>Table of Contents:</h4>" + "<ul>";
+
+                    // Get all elements with the "toc" class
+                    $('.toc').each(function() {
+                        var ele = $(this);
+                        var title = ele.text();
+                        var link = "#" + ele.attr("id");
+
+                        ToC += "<li><a id='toc-" + (new Date().getTime() + Math.random()) + "' href='" + link + "'>" + title + "</a></li>";
+                    });
+
+                    ToC += "</ul>" + "</nav>";
+                    $(".prepend").prepend(ToC);
+
+                    // Make the toc links click-able
+                    $('div .toc a').on('click', function(event) {
+                        event.preventDefault();
+                        var link = $(this).attr("href");
+                        var targetId = link.split("#")[1];
+
+                        if ($(targetId).length > 0) {
+                            $(targetId).scrollIntoView();
+                        }
+                    });
+                });
+            </script>
+        {% endif %}
+        <p>{{ body|safe}}</p>
+    </main>
 {% endblock page_content %}
