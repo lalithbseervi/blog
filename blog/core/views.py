@@ -4,6 +4,7 @@ from .forms import BlogPostForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from functools import wraps
 
@@ -45,11 +46,22 @@ def fetch(request):
 
 class BlogPostService:
     @staticmethod
-    def getPosts(user: User) -> list:
+    def getPosts(user: User, pageNo) -> list:
         if user.is_superuser:
-            return BlogPost.objects.all()
+            posts = BlogPost.objects.all()
         else:
-            return BlogPost.objects.filter(password_protect=False)
+            posts = BlogPost.objects.all().filter(password_protect=False)
+
+        paginatorInstance = Paginator(posts, 4)
+    
+        try:
+            postsPage = paginatorInstance.get_page(pageNo)
+        except PageNotAnInteger:
+            postsPage = paginatorInstance.get_page(1)
+        except EmptyPage:
+            postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
+            postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
+        return postsPage
     
     @staticmethod
     def getPostsByCategory(user: User, category: Category) -> list:
@@ -101,7 +113,8 @@ class BlogDetail:
         return response
 
 def index(request):    
-    posts = BlogPostService.getPosts(request.user)
+    pageNo = request.GET.get('n')
+    posts = BlogPostService.getPosts(request.user, pageNo)
 
     context = {"posts": posts}
 
