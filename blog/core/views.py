@@ -64,17 +64,22 @@ class BlogPostService:
         return postsPage
     
     @staticmethod
-    def getPostsByCategory(user: User, category: Category) -> list:
+    def getPostsByCategory(user: User, category: Category, pageNo) -> list:
         if user.is_superuser:
-            posts = BlogPost.objects.filter(
-                Q(categories__name__icontains=category)
-            )
+            posts = BlogPost.objects.filter(Q(categories__name__icontains=category))
         else:
-            posts = BlogPost.objects.filter(
-                Q(password_protect=False) &
-                Q(categories__name__icontains=category)
-            )
-        return posts.order_by("-created_on")
+            posts = BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False))
+        
+        paginatorInstance = Paginator(posts, 4)
+        
+        try:
+            postsPage = paginatorInstance.get_page(pageNo)
+        except PageNotAnInteger:
+            postsPage = paginatorInstance.get_page(1)
+        except EmptyPage:
+            postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
+            postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
+        return postsPage
 
 class BlogDetail:
     @staticmethod
@@ -122,7 +127,9 @@ def index(request):
     return response
 
 def viewBlogByCategory(request, category):
-    posts = BlogPostService.getPostsByCategory(request.user, category)
+    pageNo = request.GET.get('n')
+    posts = BlogPostService.getPostsByCategory(request.user, category, pageNo)
+    
     context = {
         "category": category,
         "posts": posts,
