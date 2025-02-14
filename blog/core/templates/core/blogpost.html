@@ -26,18 +26,17 @@
 </style>
 {% block page_title %}
     <header>
-        <h2>{{ title }}</h2>
+        <h2>{{ post.title }}</h2>
 {% endblock page_title %}
 
 {% block page_content %}
         <p class="small">
-            {{ created_on }} | Last Updated: {{ last_modified }} </br>
-            {% for category in categories %}
+            {{ post.created_on }} | Last Updated: {{ post.last_modified }} </br>
+            {% for category in post.categories %}
                 <a href="{% url 'viewBlogByCategory' category %}">{{ category }}</a> |
             {% endfor %}</br>
                 {% if request.user.is_superuser %}
-                <a href="{% url 'editBlogPost' slug %}">Edit</a> |
-                <a href="{% url 'deleteBlogPost' slug %}">Delete</a> |
+                <a href="{% url 'editBlogPost' post.slug %}">Edit</a> |
                 <a href="{{ share_link }}">Share</a>
                 {% endif %}
         </p>
@@ -94,6 +93,9 @@
                 });
             </script>
         {% endif %}
-        <p>{{ body|safe}}</p>
+        <p>{{ post.body|safe}}</p>
+        <div class="related-posts">
+            <pre>Related Posts:<br><br>{% for post in related_posts %}    <a href="{% url 'viewBlog' post.slug %}" target="_blank">{{post.title}}</a><br><br>{% endfor %}</pre>
+        </div>
     </main>
 {% endblock page_content %}
