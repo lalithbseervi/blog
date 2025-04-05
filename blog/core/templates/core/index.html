@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name='robots' content='noindex,follow' />
+        <title>The Digital Mind</title>
+        <link rel="stylesheet" href="{% static 'simple.css' %}">
+        <style>
+            .pagination {
+                display: inline-block;
+            }
+
+            a#page_no {
+                tab-size: 4;
+            }
+        </style>
+    </head>
+    <body>
+        {% block page_title %}
+            <header><h3>Posts | <a href="{% url 'createBlogPost' %}">Create Post</a></h3></header>
+        {% endblock %}
+        <main>
+        {% block post_list %}
+            {% block posts %}
+                {% for post in posts.object_list %}
+                    <div class="post">
+                        <h3><a href="{% url 'viewBlog' post.slug %}">{{ post.title }}</a></h3>
+                            <small>
+                                {{ post.created_on.date }} | 
+                                {% if post.categories.all %}
+                                    Categories:
+                                    {% for category in post.categories.all %}
+                                        <a href="{% url 'viewBlogByCategory' category.name %}"> {{ category.name }}</a> |
+                                    {% endfor %}
+                                {% endif %}
+                                <a href="{{ post.get_share_url }}">Share</a>
+                            </small>
+                    </div></br>
+                {% endfor %}
+            {% endblock posts %}
+            <center>
+                <div class="pagination">
+                    {% for i in posts.paginator.page_range %}
+                        {% if i == posts.number %}
+                            <span><a href="?n={{posts.number}}" id="page_no">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</a></span>&emsp;
+                        {% else %}
+                            <span><a href="?n={{i}}" id="page_no">{{i}}</a></span>&emsp;
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </center>
+        {% endblock post_list %}
+        </main>
+    </body>
+</html>

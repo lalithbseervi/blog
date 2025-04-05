@@ -1,0 +1,10 @@
+footer {
+    background-color: black;
+    font-size: 0.8750em;
+    color: white;
+}
+
+footer > a {
+    text-decoration: solid underline;
+    text-decoration-color: white;
+}

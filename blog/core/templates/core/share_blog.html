@@ -1,0 +1,89 @@
+{% load static %}
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'simple.css' %}">
+    <meta name='robots' content='noindex,follow' />
+    {% if req_toc %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% endif %}
+</head>
+<style>
+    .inline {
+        text-decoration: underline;
+        text-decoration-color: #ffb300;
+    }
+
+    main {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    p.small {
+        font-size: 1.2rem;
+    }
+</style>
+{% block page_title %}
+    <header>
+        <h2>{{ title }}</h2>
+{% endblock page_title %}
+
+
+{% block page_content %}
+            <p class="small">{{ created_on }} | Last Updated: {{ last_modified }} </br>
+            {% for category in categories %}
+                {{ category }} |
+            {% endfor %}</p>
+    </header>
+    <main>
+        <div class="prepend"></div>
+        {% if req_toc %}
+            <style>
+                .table-of-contents ul {
+                    padding: 0;
+                }
+
+                .table-of-contents li {
+                    margin: 0 0 0.25em 0;
+                    margin-left: 2.5em;
+                }
+
+                .table-of-contents a {
+                    text-decoration: none;
+                }
+
+                .table-of-contents a:hover,
+                .table-of-contents a:active {
+                    text-decoration: underline;
+                }
+            </style>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', () => {
+                    var ToC = "<nav role='navigation' class='table-of-contents'>" +
+                "<h4>Table of Contents:</h4>" + "<ul>";
+
+                    $('.toc').each(function() {
+                        var ele = $(this);
+                        var title = ele.text();
+                        var link = "#" + ele.attr("id");
+
+                        ToC += "<li><a id='toc-" + (new Date().getTime() + Math.random()) + "' href='" + link + "'>" + title + "</a></li>";
+                    });
+
+                    ToC += "</ul>" + "</nav>";
+                    $(".prepend").prepend(ToC);
+
+                    $('div .toc a').on('click', function(event) {
+                        event.preventDefault();
+                        var link = $(this).attr("href");
+                        var targetId = link.split("#")[1];
+
+                        if ($(targetId).length > 0) {
+                            $(targetId).scrollIntoView();
+                        }
+                    });
+                });
+            </script>
+        {% endif %}
+        <p>{{ body|safe}}</p>
+    </main>
+{% endblock page_content %}
