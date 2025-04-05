@@ -55,7 +55,11 @@ class BlogPostService:
             posts = BlogPost.objects.all().filter(password_protect=False)
 
         paginatorInstance = Paginator(posts, number_of_posts)
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
         try:
             postsPage = paginatorInstance.get_page(pageNo)
         except PageNotAnInteger:
@@ -64,16 +68,26 @@ class BlogPostService:
             postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
             postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
         return postsPage, paginatorInstance
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     @staticmethod
     def getPostsByCategory(user: User, category: Category, pageNo) -> list:
         if user.is_superuser:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category))
         else:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False))
+<<<<<<< HEAD
 
         paginatorInstance = Paginator(posts, 4)
 
+=======
+
+        paginatorInstance = Paginator(posts, 4)
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
         try:
             postsPage = paginatorInstance.get_page(pageNo)
         except PageNotAnInteger:
@@ -82,15 +96,26 @@ class BlogPostService:
             postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
             postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
         return postsPage
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     @staticmethod
     def getRelatedPosts(user: User, slug) -> list:
         post = get_object_or_404(BlogPost, slug=slug)
         categories = post.categories.all()
+<<<<<<< HEAD
 
         for category in categories:
             related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
 
+=======
+
+        for category in categories:
+            related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
         if user.is_superuser is False:
             related_posts.filter(password_protect=False)
 
@@ -116,11 +141,19 @@ class BlogDetail:
             'req_toc': post.require_table_of_contents
         }
         return response
+<<<<<<< HEAD
 
     @staticmethod
     def getBlogDetailShareView(uuid):
         post = get_object_or_404(BlogPost, share_token=uuid)
 
+=======
+
+    @staticmethod
+    def getBlogDetailShareView(uuid):
+        post = get_object_or_404(BlogPost, share_token=uuid)
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
         response = {
             'title': post.title,
             'categories': post.categories.all(),
@@ -132,7 +165,11 @@ class BlogDetail:
 
         return response
 
+<<<<<<< HEAD
 def index(request):
+=======
+def index(request):
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     pageNo = request.GET.get('page')
 
     is_mobile = is_mobile_device(request)
@@ -164,7 +201,11 @@ def index(request):
 def viewBlogByCategory(request, category):
     pageNo = request.GET.get('page')
     posts = BlogPostService.getPostsByCategory(request.user, category, pageNo)
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     context = {
         "category": category,
         "posts": posts,
@@ -184,7 +225,11 @@ def viewBlog(request, slug):
         'related_posts': related_posts,
         'quote': quote
     }
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     if context == False:
         return render(request, 'core/404.html')
     else:
@@ -225,7 +270,11 @@ def delete_post(slug):
 
 def share(request, uuid):
     quote = fetchQuote()
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> d4bc3fb67c1278bb931cfbe9320118daa73375cb
     slug = BlogPost.objects.get(share_token=uuid).slug
 
     related_posts = BlogPostService.getRelatedPosts(request.user, slug)
