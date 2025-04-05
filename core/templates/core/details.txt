@@ -1,0 +1,3 @@
+simple.min.css - 9.17kB
+terminal - 27kB
+ckeditor - 70kB

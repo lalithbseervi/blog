@@ -1,0 +1,30 @@
+<div class="toc-parent"></div>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        var ToC = "<nav role='navigation' class='table-of-contents'>" +
+    "<h4>Table of Contents:</h4>" + "<ul>";
+
+        // Get all elements with the "toc" class
+        $('h1,h2,h3').each(function() {
+            var ele = $(this);
+            var title = ele.text();
+            var link = "#" + ele.attr("id");
+
+            ToC += "<li><a id='toc-" + (new Date().getTime() + Math.random()) + "' href='" + link + "'>" + title + "</a></li>";
+        });
+
+        ToC += "</ul>" + "</nav>";
+        $(".toc-parent").prepend(ToC);
+
+        // Make the toc links click-able
+        $('div .toc a').on('click', function(event) {
+            event.preventDefault();
+            var link = $(this).attr("href");
+            var targetId = link.split("#")[1];
+
+            if ($(targetId).length > 0) {
+                $(targetId).scrollIntoView();
+            }
+        });
+    });
+</script>

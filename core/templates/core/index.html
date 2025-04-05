@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name='robots' content='noindex,follow' />
+        <title>The Digital Mind</title>
+        <link rel="stylesheet" href="{% static 'base.css' %}">
+        <link rel="stylesheet" href="{% static 'index.css' %}">
+    </head>
+    <body>
+        {% include 'core/components/header.html' %}
+        <main>
+        {% block post_list %}
+            {% block posts %}
+            <div class="post_container">
+                {% for post in posts.object_list %}
+                    <div class="post">
+                        <h2><a href="{% url 'viewBlog' post.slug %}">{{ post.title }}</a></h2>
+                            <div class="post_detail">
+                                {{ post.created_on.date }} | <a href="{{ post.get_share_url }}">Share</a></br>
+                                <div class="post_categories">
+                                    {% if post.categories.all %}
+                                        {% for category in post.categories.all %}
+                                            <a href="{% url 'viewBlogByCategory' category.name %}" data-anchor="category"> {{ category.name }}</a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endblock posts %}
+            <div id="pagination-container">
+                {% include 'core/components/pagination.html' %}
+            </div>
+        {% endblock post_list %}
+        </main>
+        {% include 'core/components/footer.html' %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const paginationLinks = document.querySelectorAll('.pagination-link');
+                let postContainer = document.getElementsByClassName('post_container')[0];
+                let pagination = document.getElementById('pagination-container');
+                let isRequesting = false;
+
+                function bindPaginationLinks() {
+                    const paginationLinks = document.querySelectorAll('.pagination-link');
+                    
+                    paginationLinks.forEach(link => {
+                        link.removeEventListener('click', handlePaginationClick); // Remove previous listener if any
+                        link.addEventListener('click', handlePaginationClick);   // Attach the click handler
+                    });
+                }
+
+                function handlePaginationClick(e) {
+                    e.preventDefault();  // Prevent default behavior (page reload)
+                    if (isRequesting) return;
+                    isRequesting = true;
+
+                    const pageNo = this.getAttribute('href').split('=')[1];  // Get the page number from the link
+                    
+                    // Update the URL without reloading the page
+                    const newUrl = `?page=${pageNo}`;
+                    history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
+
+                    // Make the AJAX request to fetch the new page's content
+                    fetch(newUrl, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',  // Indicate this is an AJAX request
+                        }
+                    })
+                    .then(response => response.json())  // Parse JSON response
+                    .then(data => {
+                        postContainer.innerHTML = data.posts;  // Replace the post list
+                        pagination.innerHTML = data.pagination;  // Update the pagination
+
+                        bindPaginationLinks();
+                    })
+                    .finally(() => {
+                        isRequesting = false;
+                    });
+                }
+
+                bindPaginationLinks();
+
+                // Update the active page link on initial load
+                const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Default to page 1 if no page param is in the URL
+            });
+        </script>
+    </body>
+</html>
