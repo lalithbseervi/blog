@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from functools import wraps
-from .utils import is_mobile_device, is_ajax
+from .utils import is_mobile_device, is_ajax, fetchQuote
 
 # Create your views here.
 def superuser(view):
