@@ -6,13 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name='robots' content='noindex,follow' />
         <title>The Digital Mind</title>
-<<<<<<< HEAD
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
         <link rel="stylesheet" href="{% static 'css/index.css' %}">
-=======
-        <link rel="stylesheet" href="{% static 'base.css' %}">
-        <link rel="stylesheet" href="{% static 'index.css' %}">
->>>>>>> origin/main
     </head>
     <body>
         {% include 'core/components/header.html' %}
@@ -65,13 +60,11 @@
                     isRequesting = true;
 
                     const pageNo = this.getAttribute('href').split('=')[1];  // Get the page number from the link
-                    
-<<<<<<< HEAD
+
                     // Update the URL
                     const newUrl = `?page=${pageNo}`;
                     history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
 
-                    // Fetch page
                     fetch(newUrl, {
                         method: 'GET',
                         headers: {
@@ -82,37 +75,16 @@
                     .then(data => {
                         postContainer.innerHTML = data.posts; 
                         pagination.innerHTML = data.pagination; 
-=======
+                        
                     // Update the URL without reloading the page
                     const newUrl = `?page=${pageNo}`;
                     history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
 
-                    // Make the AJAX request to fetch the new page's content
-                    fetch(newUrl, {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',  // Indicate this is an AJAX request
-                        }
-                    })
-                    .then(response => response.json())  // Parse JSON response
-                    .then(data => {
-                        postContainer.innerHTML = data.posts;  // Replace the post list
-                        pagination.innerHTML = data.pagination;  // Update the pagination
->>>>>>> origin/main
-
-                        bindPaginationLinks();
-                    })
-                    .finally(() => {
-                        isRequesting = false;
                     });
                 }
 
                 bindPaginationLinks();
 
-<<<<<<< HEAD
-=======
-                // Update the active page link on initial load
->>>>>>> origin/main
                 const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Default to page 1 if no page param is in the URL
             });
         </script>

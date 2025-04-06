@@ -1,16 +1,9 @@
 {% load static %}
 {% block page_title %}
-<<<<<<< HEAD
 <link rel="stylesheet" href="{% static 'css/header.css' %}">
 <header>
     <blockquote>{{ quote }}</blockquote>
     <a href="{% url 'search' %}" class="posts">Search Posts</a>
-=======
-<link rel="stylesheet" href="{% static 'header.css' %}">
-<header>
-    <blockquote>{{ quote }}</blockquote>
-    <a href="{% url 'index' %}" class="posts">Posts</a>
->>>>>>> origin/main
     <a href="https://www.onetake.pages.dev/" class="header">Web Portfolio</a>
 </header><hr>
 {% endblock %}
