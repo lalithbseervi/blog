@@ -1,5 +1,10 @@
 from django.http import HttpRequest
 import random
+from .models import BlogPost, Category
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import get_object_or_404, render
+from django.db.models import Q
 
 def is_mobile_device(request: HttpRequest) -> bool:
         user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
@@ -26,3 +31,90 @@ def fetchQuote():
     quote = random.choice(quotes)
 
     return quote
+
+class BlogPostService:
+    @staticmethod
+    def getPosts(user: User, pageNo: int, number_of_posts: int) -> list:
+        if user.is_superuser:
+            posts = BlogPost.objects.all()
+        else:
+            posts = BlogPost.objects.all().filter(password_protect=False)
+
+        paginatorInstance = Paginator(posts, number_of_posts)
+    
+        try:
+            postsPage = paginatorInstance.get_page(pageNo)
+        except PageNotAnInteger:
+            postsPage = paginatorInstance.get_page(1)
+        except EmptyPage:
+            postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
+            postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
+        return postsPage, paginatorInstance
+    
+    @staticmethod
+    def getPostsByCategory(user: User, category: Category, pageNo) -> list:
+        if user.is_superuser:
+            posts = BlogPost.objects.filter(Q(categories__name__icontains=category))
+        else:
+            posts = BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False))
+        
+        paginatorInstance = Paginator(posts, 4)
+        
+        try:
+            postsPage = paginatorInstance.get_page(pageNo)
+        except PageNotAnInteger:
+            postsPage = paginatorInstance.get_page(1)
+        except EmptyPage:
+            postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
+            postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
+        return postsPage
+    
+    @staticmethod
+    def getRelatedPosts(user: User, slug) -> list:
+        post = get_object_or_404(BlogPost, slug=slug)
+        categories = post.categories.all()
+        
+        for category in categories:
+            related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
+        
+        if user.is_superuser is False:
+            related_posts.filter(password_protect=False)
+
+        return related_posts
+
+class BlogDetail:
+    @staticmethod
+    def getBlogDetailAdminView(request, slug):
+        post = get_object_or_404(BlogPost, slug=slug)
+        if post.password_protect:
+            if request.user.is_superuser:
+                pass
+            else:
+                return render(request, 'core/error/403.html', status=403)
+            
+        response = {
+            'title': post.title,
+            'share_link': post.get_share_url(),
+            'categories': post.categories.all(),
+            'created_on': post.created_on,
+            'last_modified': post.last_modified,
+            'body': post.body,
+            'slug': post.slug,
+            'req_toc': post.require_table_of_contents
+        }
+        return response
+    
+    @staticmethod
+    def getBlogDetailShareView(uuid):
+        post = get_object_or_404(BlogPost, share_token=uuid)
+        
+        response = {
+            'title': post.title,
+            'categories': post.categories.all(),
+            'created_on': post.created_on.date,
+            'last_modified': post.last_modified,
+            'body': post.body,
+            'req_toc': post.require_table_of_contents
+        }
+
+        return response
