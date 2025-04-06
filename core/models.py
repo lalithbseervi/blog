@@ -1,4 +1,8 @@
 from django.db import models
+<<<<<<< HEAD
+=======
+from mdeditor.fields import MDTextField
+>>>>>>> origin/main
 from tinymce import models as tinymce_models
 from django.urls import reverse
 from django.utils.text import slugify

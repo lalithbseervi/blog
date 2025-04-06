@@ -73,12 +73,12 @@
                                 const categories = ele[i].categories || [];
                                 const categoriesHTML = categories.length > 0 ?
                                 categories.map(category => {
-                                    return `<a href="${window.location.hostname}/category/${category}" data-anchor="category">${category}</a>`;
+                                    return `<a href="${window.location.origin}/category/${category}" data-anchor="category">${category}</a>`;
                                 }).join(" ") : '';
 
                                 const post = `
                                 <div class="post">
-                                    <h2><a href="${window.location.hostname}/posts/${ele[i].slug}/">${ele[i].title}</a></h2>
+                                    <h2><a href="${window.location.origin}/posts/${ele[i].slug}/">${ele[i].title}</a></h2>
                                     <div class="post_detail">
                                         ${ele[i].date_created_on}<br>
                                         <div class="post_categories">

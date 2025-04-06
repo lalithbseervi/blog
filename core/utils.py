@@ -1,10 +1,13 @@
 from django.http import HttpRequest
 import random
+<<<<<<< HEAD
 from .models import BlogPost, Category
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
+=======
+>>>>>>> origin/main
 
 def is_mobile_device(request: HttpRequest) -> bool:
         user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
@@ -25,11 +28,16 @@ def fetchQuote():
         "A leader is best when people barely know he exists, when his work is done, his aim fulfilled, they will say: we did it ourselves. - Lao Tzu",
         "If the only tool you have is a hammer, everything looks like a nail.",
         "The man who asks a question is a fool for a minute, the man who does not ask is a fool for life. - Confucious",
+<<<<<<< HEAD
         "Yesterday, I was clever, so I wanted to change the world. Today, I am cleverer, so I am changing myself.",
+=======
+        "Yesterday, I was clever, so I wanted to change the world. Today, I am clever, so I am changing myself.",
+>>>>>>> origin/main
     ]
 
     quote = random.choice(quotes)
 
+<<<<<<< HEAD
     return quote
 
 class BlogPostService:
@@ -118,3 +126,6 @@ class BlogDetail:
         }
 
         return response
+=======
+    return quote
+>>>>>>> origin/main
