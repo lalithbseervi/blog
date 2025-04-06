@@ -41,7 +41,7 @@ class BlogPostService:
             posts = BlogPost.objects.all().filter(password_protect=False)
 
         paginatorInstance = Paginator(posts, number_of_posts)
-    
+
         try:
             postsPage = paginatorInstance.get_page(pageNo)
         except PageNotAnInteger:
@@ -50,16 +50,16 @@ class BlogPostService:
             postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
             postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
         return postsPage, paginatorInstance
-    
+
     @staticmethod
     def getPostsByCategory(user: User, category: Category, pageNo) -> list:
         if user.is_superuser:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category))
         else:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False))
-        
+
         paginatorInstance = Paginator(posts, 4)
-        
+
         try:
             postsPage = paginatorInstance.get_page(pageNo)
         except PageNotAnInteger:
@@ -68,15 +68,15 @@ class BlogPostService:
             postsPage = paginatorInstance.get_page(paginatorInstance.num_pages)
             postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
         return postsPage
-    
+
     @staticmethod
     def getRelatedPosts(user: User, slug) -> list:
         post = get_object_or_404(BlogPost, slug=slug)
         categories = post.categories.all()
-        
+
         for category in categories:
             related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
-        
+
         if user.is_superuser is False:
             related_posts.filter(password_protect=False)
 
@@ -91,7 +91,7 @@ class BlogDetail:
                 pass
             else:
                 return render(request, 'core/error/403.html', status=403)
-            
+
         response = {
             'title': post.title,
             'share_link': post.get_share_url(),
@@ -103,11 +103,11 @@ class BlogDetail:
             'req_toc': post.require_table_of_contents
         }
         return response
-    
+
     @staticmethod
     def getBlogDetailShareView(uuid):
         post = get_object_or_404(BlogPost, share_token=uuid)
-        
+
         response = {
             'title': post.title,
             'categories': post.categories.all(),
