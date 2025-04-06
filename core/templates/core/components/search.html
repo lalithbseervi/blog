@@ -48,9 +48,7 @@
             searchInput.addEventListener('keyup', function(event) {
                 setTimeout(() => {}, 50);
                 const ignoredKeys = ['Alt', 'Control', 'Shift', 'Escape', 'Meta', 'ArrowUp', 'ArrowDown', 'Tab', 'Space', 'Backspace'];
-                if (ignoredKeys.includes(event.key)) {
-                    return; 
-                }
+                if (ignoredKeys.includes(event.key)) return;
 
                 let query = searchInput.value;
                 if (query.length < 3) return;
