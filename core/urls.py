@@ -6,6 +6,7 @@ urlpatterns = [
     path("home/", views.index, name='index'),
     path('fetch/', views.fetch, name='fetch'),
     path("category/<str:category>/", views.viewBlogByCategory, name="viewBlogByCategory"),
+    path("posts/search/", views.search, name='search'),
     path("posts/create/", views.create_post, name='createBlogPost'),
     path("posts/<slug:slug>/", views.viewBlog, name='viewBlog'),
     path("posts/<slug:slug>/edit/", views.edit_post, name='editBlogPost'),
