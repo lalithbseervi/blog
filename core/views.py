@@ -1,4 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
+<<<<<<< HEAD
+from .models import BlogPost
+from .forms import BlogPostForm
+from django.http import HttpResponseForbidden, JsonResponse
+from django.template.loader import render_to_string
+from django.db.models import Q
+from functools import wraps
+from .utils import is_mobile_device, is_ajax, fetchQuote, BlogDetail, BlogPostService
+import json
+
+=======
 from .models import BlogPost, Category
 from .forms import BlogPostForm
 from django.contrib.auth.models import User
@@ -11,6 +22,7 @@ from functools import wraps
 from .utils import is_mobile_device, is_ajax, fetchQuote
 
 # Create your views here.
+>>>>>>> origin/main
 def superuser(view):
     @wraps(view)
     def _wrapped_view(request, *args, **kwargs):
@@ -46,6 +58,12 @@ def fetch(request):
         }
         return render(request, 'core/terminal.html', context)
 
+<<<<<<< HEAD
+def index(request):    
+    pageNo = request.GET.get('page')
+    is_mobile = is_mobile_device(request)
+    posts, paginator = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
+=======
 class BlogPostService:
     @staticmethod
     def getPosts(user: User, pageNo: int, number_of_posts: int) -> list:
@@ -139,6 +157,7 @@ def index(request):
 
     posts, paginator = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
 
+>>>>>>> origin/main
     quote = fetchQuote()
 
     context = {
@@ -147,9 +166,13 @@ def index(request):
         'quote': quote,
     }
 
+<<<<<<< HEAD
+    if is_ajax(request):
+=======
     ajax = is_ajax(request)
 
     if ajax:
+>>>>>>> origin/main
         posts = render_to_string('core/components/partial_posts.html', context)
         pagination = render_to_string('core/components/pagination.html', context)
 
@@ -174,9 +197,13 @@ def viewBlogByCategory(request, category):
 
 def viewBlog(request, slug):
     post = BlogDetail.getBlogDetailAdminView(request, slug)
+<<<<<<< HEAD
+    related_posts = BlogPostService.getRelatedPosts(request.user, slug)
+=======
 
     related_posts = BlogPostService.getRelatedPosts(request.user, slug)
 
+>>>>>>> origin/main
     quote = fetchQuote()
 
     context = {
@@ -225,9 +252,13 @@ def delete_post(slug):
 
 def share(request, uuid):
     quote = fetchQuote()
+<<<<<<< HEAD
+    slug = BlogPost.objects.get(share_token=uuid).slug
+=======
     
     slug = BlogPost.objects.get(share_token=uuid).slug
 
+>>>>>>> origin/main
     related_posts = BlogPostService.getRelatedPosts(request.user, slug)
 
     context = {
@@ -238,6 +269,35 @@ def share(request, uuid):
 
     return render(request, 'core/share_blog.html', context)
 
+<<<<<<< HEAD
+def search(request):
+    if request.method == 'POST':
+        request_body = request.body.decode('utf-8')
+        parsed_body = json.loads(request_body)
+        query = parsed_body['search_query']
+        print(query)
+
+        posts = BlogPost.objects.filter(title__icontains=query) or BlogPost.objects.filter(Q(body__icontains=query)) or BlogPost.objects.filter(Q(categories__name__icontains=query))
+
+        results = []
+        for post in posts:
+            post_data = {
+                "title": post.title,
+                "date_created_on": post.created_on.strftime('%b. %d, %Y'),
+                "categories": [category.name for category in post.categories.all()],
+                "slug": post.slug
+            }
+            results.append(post_data)
+
+        print(results)
+        return JsonResponse({'results': results})
+
+    quote = fetchQuote()
+
+    return render(request, 'core/components/search.html', {'quote': quote})
+
+=======
+>>>>>>> origin/main
 def error403(request, exception):
     return render(request, 'core/error/403.html')
 

@@ -4,11 +4,20 @@
     <title>{{ post.title }}</title>
     <meta name='robots' content='noindex,follow' />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/highlight.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/post.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table-of-contents.css' %}">
+    <link rel="stylesheet" href="{% static 'css/highlight-css/github-dark-dimmed.min.css' %}">
+=======
     <link rel="stylesheet" href="{% static 'header.css' %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="{% static 'base.css' %}">
     <link rel="stylesheet" href="{% static 'post.css' %}">
     <link rel="stylesheet" href="{% static 'table-of-contents.css' %}">
+>>>>>>> origin/main
 </head>
 <body>
     {% include 'core/components/header.html' %}
@@ -30,7 +39,10 @@
                 {{ post.body|safe}}
             </div>
         </main>
+<<<<<<< HEAD
+=======
     <!-- <p>Related Posts</p> -->
+>>>>>>> origin/main
     <div class="related-posts">
         {% for post in related_posts %}
         <div class="post">
@@ -48,4 +60,8 @@
         {% endfor %}
     </div>
     {% include 'core/components/footer.html' %}
+<<<<<<< HEAD
+    <script>hljs.highlightAll();</script>
+=======
+>>>>>>> origin/main
 </body>

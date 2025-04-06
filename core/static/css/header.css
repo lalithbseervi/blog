@@ -1,0 +1,55 @@
+body {
+    font-family: helvetica;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    align-items: baseline;
+    justify-content: space-evenly;
+}
+
+blockquote {
+    font-size: 0.8750em;
+    font-style: italic;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 1em; /*15px*/
+    border-left: 0.45em solid #ccc;
+} 
+
+hr {
+    border-bottom: 0.1px black;
+    opacity: 40%;
+}
+
+@media only screen and (min-width: 270px) and (max-width: 600px) {
+    hr {
+        margin-bottom: 0em;
+    }
+
+    header {
+        align-items: center;
+        justify-content: left;
+        gap: 0em;
+    }
+
+    blockquote {
+        margin-left: 0.8em;
+        font-size: 0.7750em;
+        padding-top: 0.5em;
+        max-width: 45%;
+    }
+
+    a.header {
+        margin-right: 1em;
+    }
+
+    a.posts {
+        margin-left: -2em;
+        margin-right: 1em;
+    }
+}
