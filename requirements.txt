@@ -1,17 +1,4 @@
 asgiref==3.8.1
-<<<<<<< HEAD
 Django>=5.1.8
 django-js-asset==3.0.1
 sqlparse==0.5.3
-=======
-<<<<<<< HEAD
-Django>=5.1.8
-django-js-asset==3.0.1
-=======
-Django==5.1.5
-django-ckeditor==6.7.2
-django-js-asset==3.0.1
-django-mdeditor==0.1.20
->>>>>>> origin/main
-sqlparse==0.5.3
->>>>>>> c6377c9a5646053d493498ae6145bbbeef44bceb
