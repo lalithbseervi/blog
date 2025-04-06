@@ -1,0 +1,15 @@
+{% for post in posts.object_list %}
+    <div class="post">
+        <h2><a href="{% url 'viewBlog' post.slug %}">{{ post.title }}</a></h2>
+            <div class="post_detail">
+                {{ post.created_on.date }} | <a href="{{ post.get_share_url }}">Share</a></br>
+                <div class="post_categories">
+                    {% if post.categories.all %}
+                        {% for category in post.categories.all %}
+                            <a href="{% url 'viewBlogByCategory' category.name %}" data-anchor="category"> {{ category.name }}</a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+    </div>
+{% endfor %}

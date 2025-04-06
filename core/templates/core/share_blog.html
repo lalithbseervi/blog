@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <title>{{ post.title }}</title>
+    <meta name='robots' content='noindex,follow' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/post.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table-of-contents.css' %}">
+</head>
+<body>
+    {% include 'core/components/header.html' %}
+        <main>
+            <div class="post_header">
+                <h1>{{ post.title }}</h1>
+                    <div class="post_detail">
+                        {{ post.created_on }} | <a href="{{ share_link }}">Share</a></br>
+                        <div class="post_categories">
+                            {% if post.categories.all %}
+                                {% for category in post.categories.all %}
+                                    <a href="{% url 'viewBlogByCategory' category.name %}" data-anchor="category"> {{ category.name }}</a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+            <div class="post_body">
+                {{ post.body|safe}}
+            </div>
+        </main>
+    <div class="related-posts">
+        {% for post in related_posts %}
+        <div class="post">
+            <a href="{% url 'viewBlog' post.slug %}" target="_blank">{{post.title}}</a>
+                <div class="post_detail">
+                    <div class="post_categories">
+                        {% if post.categories.all %}
+                            {% for category in post.categories.all %}
+                                <a href="{% url 'viewBlogByCategory' category.name %}" data-anchor="category"> {{ category.name }}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% include 'core/components/footer.html' %}
+</body>
