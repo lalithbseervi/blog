@@ -1,3 +1,4 @@
+/* prevent img from overflowing on mobile devices */
 html, body {
   overflow-x: hidden;
 }
@@ -11,7 +12,6 @@ h1, hr, h2,
 }
 
 /* HTML Tags */
-
 body {
   display: flex;
   flex-direction: column;
@@ -28,7 +28,6 @@ main {
 }
 
 /* Text Tags */
-  
 h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
@@ -50,4 +49,18 @@ img {
 footer > a {
   text-decoration: solid underline!important;
   text-decoration-color: white!important;
+}
+
+/* scrollbar */
+body::-webkit-scrollbar {
+  width: 1em;
+}
+ 
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+}
+ 
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }

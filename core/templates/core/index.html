@@ -61,21 +61,21 @@
 
                     const pageNo = this.getAttribute('href').split('=')[1];  // Get the page number from the link
 
-                    // Update the URL without reloading the page
+                    // Update the URL
                     const newUrl = `?page=${pageNo}`;
                     history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
 
-                    // Make the AJAX request to fetch the new page's content
+                    // Fetch page
                     fetch(newUrl, {
                         method: 'GET',
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest',  // Indicate this is an AJAX request
+                            'X-Requested-With': 'XMLHttpRequest',  // Indicates this is an AJAX request
                         }
                     })
-                    .then(response => response.json())  // Parse JSON response
+                    .then(response => response.json())
                     .then(data => {
-                        postContainer.innerHTML = data.posts;  // Replace the post list
-                        pagination.innerHTML = data.pagination;  // Update the pagination
+                        postContainer.innerHTML = data.posts;
+                        pagination.innerHTML = data.pagination;
 
                         bindPaginationLinks();
                     })
@@ -86,7 +86,6 @@
 
                 bindPaginationLinks();
 
-                // Update the active page link on initial load
                 const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Default to page 1 if no page param is in the URL
             });
         </script>
