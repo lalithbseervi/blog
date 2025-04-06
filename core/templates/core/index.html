@@ -6,13 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name='robots' content='noindex,follow' />
         <title>The Digital Mind</title>
-<<<<<<< HEAD
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
         <link rel="stylesheet" href="{% static 'css/index.css' %}">
-=======
-        <link rel="stylesheet" href="{% static 'base.css' %}">
-        <link rel="stylesheet" href="{% static 'index.css' %}">
->>>>>>> origin/main
     </head>
     <body>
         {% include 'core/components/header.html' %}
@@ -70,7 +65,6 @@
                     const newUrl = `?page=${pageNo}`;
                     history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
 
-                    // Fetch page
                     fetch(newUrl, {
                         method: 'GET',
                         headers: {
@@ -82,10 +76,10 @@
                         postContainer.innerHTML = data.posts;
                         pagination.innerHTML = data.pagination;
 
-                        bindPaginationLinks();
-                    })
-                    .finally(() => {
-                        isRequesting = false;
+                    // Update the URL without reloading the page
+                    const newUrl = `?page=${pageNo}`;
+                    history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
+
                     });
                 }
 
