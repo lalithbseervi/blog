@@ -53,28 +53,33 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        Object.entries(data).forEach(([key, ele]) => {
-                            for(i in ele) {
-                                const categories = ele[i].categories || [];
-                                const categoriesHTML = categories.length > 0 ?
-                                categories.map(category => {
-                                    return `<a href="${window.location.origin}/category/${category}" data-anchor="category">${category}</a>`;
-                                }).join(" ") : '';
+                        if (data.results == "No posts found") {
+                            post_container.innerHTML = `<h3 style="color: #C6011F">No posts found :(</h3?`
+                        }
+                        else {
+                            Object.entries(data).forEach(([key, ele]) => {
+                                for(i in ele) {
+                                    const categories = ele[i].categories || [];
+                                    const categoriesHTML = categories.length > 0 ?
+                                    categories.map(category => {
+                                        return `<a href="${window.location.origin}/category/${category}" data-anchor="category">${category}</a>`;
+                                    }).join(" ") : '';
 
-                                const post = `
-                                <div class="post">
-                                    <h2><a href="${window.location.origin}/posts/${ele[i].slug}/">${ele[i].title}</a></h2>
-                                    <div class="post_detail">
-                                        ${ele[i].date_created_on}<br>
-                                        <div class="post_categories">
-                                            ${categoriesHTML}
+                                    const post = `
+                                    <div class="post">
+                                        <h2><a href="${window.location.origin}/posts/${ele[i].slug}/">${ele[i].title}</a></h2>
+                                        <div class="post_detail">
+                                            ${ele[i].date_created_on}<br>
+                                            <div class="post_categories">
+                                                ${categoriesHTML}
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>`;
+                                    </div>`;
 
-                                post_container.innerHTML += post;
-                            }
-                        });
+                                    post_container.innerHTML += post;
+                                }
+                            }); 
+                        }
                     })
                 }, 800);
             })
