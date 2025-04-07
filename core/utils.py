@@ -52,13 +52,13 @@ class BlogPostService:
         return postsPage, paginatorInstance
 
     @staticmethod
-    def getPostsByCategory(user: User, category: Category, pageNo) -> list:
+    def getPostsByCategory(user: User, category: Category, pageNo, number_of_posts: int) -> list:
         if user.is_superuser:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category))
         else:
             posts = BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False))
 
-        paginatorInstance = Paginator(posts, 4)
+        paginatorInstance = Paginator(posts, number_of_posts)
 
         try:
             postsPage = paginatorInstance.get_page(pageNo)
