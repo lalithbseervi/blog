@@ -156,22 +156,30 @@ def search(request):
         parsed_body = json.loads(request_body)
         query = parsed_body['search_query']
 
-        posts = set(BlogPost.objects.filter(Q(title__icontains=query)| Q(body__icontains=query) | Q(categories__name__icontains=query)))
-
-        if not request.user.is_superuser:
-            posts = posts.filter(password_protect=False)
+        try:
+            posts = BlogPost.objects.filter(Q(title__icontains=query)| Q(body__icontains=query) | Q(categories__name__icontains=query))
+            if not request.user.is_superuser:
+                posts = posts.filter(password_protect=False)
+            posts = set(posts)
+        except UnboundLocalError:
+            posts = False
 
         results = []
-        for post in posts:
-            post_data = {
-                "title": post.title,
-                "date_created_on": post.created_on.strftime('%b. %d, %Y'),
-                "categories": [category.name for category in post.categories.all()],
-                "slug": post.slug
-            }
-            results.append(post_data)
+        try:
+            for post in posts:
+                post_data = {
+                    "title": post.title,
+                    "date_created_on": post.created_on.strftime('%b. %d, %Y'),
+                    "categories": [category.name for category in post.categories.all()],
+                    "slug": post.slug
+                }
+                results.append(post_data)
+        except Exception as e:
+            print(e)
 
-        return JsonResponse({'results': results})
+        if posts:
+            return JsonResponse({'results': results})
+        return JsonResponse({'results': 'No posts found'})
 
     quote = fetchQuote()
 
