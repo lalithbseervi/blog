@@ -157,7 +157,7 @@ def search(request):
         query = parsed_body['search_query']
 
         try:
-            posts = BlogPost.objects.filter(Q(title__icontains=query)| Q(body__icontains=query) | Q(categories__name__icontains=query))
+            posts = BlogPost.objects.filter(Q(title__icontains=query)| Q(title__istartswith=query) | Q(body__icontains=query) | Q(categories__name__icontains=query) | Q(categories__name__istartswith=query))
             if not request.user.is_superuser:
                 posts = posts.filter(password_protect=False)
             posts = set(posts)
@@ -175,7 +175,7 @@ def search(request):
                 }
                 results.append(post_data)
         except Exception as e:
-            print(e)
+            pass
 
         if posts:
             return JsonResponse({'results': results})

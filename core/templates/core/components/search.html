@@ -53,7 +53,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.results == "No posts found") {
+                        if (data.results == "No posts found" || data.results.length < 1) {
                             post_container.innerHTML = `<h3 style="color: #C6011F">No posts found :(</h3?`
                         }
                         else {
