@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name='robots' content='noindex,follow' />
+    <title>403 Forbidden</title>
+    <meta http-equiv="refresh" content="3; url=https://youtu.be/dQw4w9WgXcQ?si=7eV__mdmYnPfSqB8&t=1">
+</head>
+<style>
+    body {
+        font-size: xx-large;
+    }
+
+    .center {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+<body class="center">
+    <code>You don't have permission to access this page :(</code><br>
+    <code id="countdown"></code>
+    <script>
+        let timeLeft = 3;
+
+        function updateCountdown() {
+            document.getElementById('countdown').innerText = 'Redirecting in ' + timeLeft + ' seconds.';
+
+            if (timeLeft === 0) {
+                clearInterval(timerInterval);
+            } else {
+                timeLeft--;
+            }
+        }
+
+        const timerInterval = setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

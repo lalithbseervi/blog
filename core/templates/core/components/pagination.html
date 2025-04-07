@@ -1,0 +1,11 @@
+<center>
+    <div class="pagination">
+        {% for i in posts.paginator.page_range %}
+            {% if i == posts.number %}
+                <span><a href="?page={{posts.number}}" id="page_no" class="pagination-link active">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</a></span>&emsp;
+            {% else %}
+                <span><a href="?page={{i}}" id="page_no" class="pagination-link">{{i}}</a></span>&emsp;
+            {% endif %}
+        {% endfor %}
+    </div>
+</center>

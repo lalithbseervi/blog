@@ -1,0 +1,11 @@
+footer {
+    background-color: black;
+    font-size: 0.8750em;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+footer > * {
+    margin-left: 10vw;
+}

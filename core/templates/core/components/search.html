@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Posts</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+</head>
+<body>
+    {% include 'core/components/header.html' %}
+    <main>
+        <form action="." id="search-form">
+            {% csrf_token %}
+            <input type="text" name="search" id="search" placeholder="Search by title, content, category...">
+        </form>
+
+        <div class="search-result">
+            <div class="post_container">
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#search-form');
+            let searchInput = form.querySelector('input[name="search"]');
+            const url = window.location;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            let post_container = document.querySelector(".post_container");
+            let i, debounceTimeout;
+
+            searchInput.addEventListener('keyup', function(event) {
+                setTimeout(() => {}, 50);
+                const ignoredKeys = ['Alt', 'Control', 'Shift', 'Escape', 'Meta', 'ArrowUp', 'ArrowDown', 'Tab', 'Space', 'Backspace'];
+                if (ignoredKeys.includes(event.key)) return;
+
+                let query = searchInput.value;
+                if (query.length < 3) return;
+
+                post_container.innerHTML = '';
+
+                clearTimeout(debounceTimeout);
+
+                debounceTimeout = setTimeout(() => {
+                    fetch(url, {
+                        method: 'POST',
+                        body: JSON.stringify({ search_query: query }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Object.entries(data).forEach(([key, ele]) => {
+                            for(i in ele) {
+                                const categories = ele[i].categories || [];
+                                const categoriesHTML = categories.length > 0 ?
+                                categories.map(category => {
+                                    return `<a href="${window.location.origin}/category/${category}" data-anchor="category">${category}</a>`;
+                                }).join(" ") : '';
+
+                                const post = `
+                                <div class="post">
+                                    <h2><a href="${window.location.origin}/posts/${ele[i].slug}/">${ele[i].title}</a></h2>
+                                    <div class="post_detail">
+                                        ${ele[i].date_created_on}<br>
+                                        <div class="post_categories">
+                                            ${categoriesHTML}
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                                post_container.innerHTML += post;
+                            }
+                        });
+                    })
+                }, 800);
+            })
+        })
+    </script>
+</body>
+</html>
