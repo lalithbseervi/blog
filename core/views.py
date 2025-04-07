@@ -46,13 +46,35 @@ def fetch(request):
 def index(request):
     pageNo = request.GET.get('page')
     is_mobile = is_mobile_device(request)
-    posts, paginator = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
+    posts = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
     quote = fetchQuote()
 
     context = {
-        "posts": posts,
-        "paginator": paginator,
+        'posts': posts,
         'quote': quote,
+    }
+
+    if is_ajax(request):
+        data = {
+            'posts': render_to_string('core/components/partial_posts.html', context),
+            'pagination': render_to_string('core/components/pagination.html', context)
+        }
+
+        return JsonResponse({data})
+
+    response = render(request, 'core/index.html', context)
+    return response
+
+def viewBlogByCategory(request, category):
+    pageNo = request.GET.get('page')
+    is_mobile = is_mobile_device(request)
+    posts = BlogPostService.getPostsByCategory(request.user, category, pageNo, 5 if is_mobile else 6)
+    quote = fetchQuote()
+
+    context = {
+        "category": category,
+        "posts": posts,
+        "quote": quote
     }
 
     if is_ajax(request):
@@ -63,20 +85,6 @@ def index(request):
             'posts': posts,
             'pagination': pagination,
         })
-
-    response = render(request, 'core/index.html', context)
-    return response
-
-def viewBlogByCategory(request, category):
-    pageNo = request.GET.get('page')
-    posts = BlogPostService.getPostsByCategory(request.user, category, pageNo)
-    quote = fetchQuote()
-
-    context = {
-        "category": category,
-        "posts": posts,
-        "quote": quote
-    }
 
     return render(request, 'core/category.html', context)
 
@@ -148,7 +156,7 @@ def search(request):
         parsed_body = json.loads(request_body)
         query = parsed_body['search_query']
 
-        posts = BlogPost.objects.filter(title__icontains=query) or BlogPost.objects.filter(Q(body__icontains=query)) or BlogPost.objects.filter(Q(categories__name__icontains=query))
+        posts = set(BlogPost.objects.filter(Q(title__icontains=query)| Q(body__icontains=query) | Q(categories__name__icontains=query)))
 
         if not request.user.is_superuser:
             posts = posts.filter(password_protect=False)

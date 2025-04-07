@@ -8,6 +8,7 @@
         <title>The Digital Mind</title>
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
         <link rel="stylesheet" href="{% static 'css/index.css' %}">
+        <link rel="icon" href="data:image/png;base64,iVBORw0KGgo=">
     </head>
     <body>
         {% include 'core/components/header.html' %}
@@ -15,6 +16,7 @@
         {% block post_list %}
             {% block posts %}
             <div class="post_container">
+                {% block page_title %}{% endblock page_title %}
                 {% for post in posts.object_list %}
                     <div class="post">
                         <h2><a href="{% url 'viewBlog' post.slug %}">{{ post.title }}</a></h2>

@@ -9,20 +9,21 @@
     <title>Edit {{ blog_post.title }}</title>
     <link rel="stylesheet" href="{% static 'simple.css' %}">
     <script type="text/javascript" src="{% static 'tinymce/tinymce.min.js' %}"></script>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgo=">
     <style>
         .mce-container {
             max-width: 100%;      /* Prevent the editor from going beyond the container */
             width: 100%;          /* Make sure it fills the available space */
             height: auto;         /* Let the height adjust based on content */
         }
-    
+
         /* Optional: Adjust height based on screen size */
         @media (max-width: 768px) {
             .mce-container {
                 height: 300px;  /* Adjust height for smaller screens */
             }
         }
-    
+
         @media (max-width: 480px) {
             .mce-container {
                 height: 250px;  /* Further adjust for very small screens */
