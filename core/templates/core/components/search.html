@@ -18,21 +18,6 @@
 
         <div class="search-result">
             <div class="post_container">
-                {% for post in posts.object_list %}
-                    <div class="post">
-                        <h2><a href="{% url 'viewBlog' post.slug %}">{{ post.title }}</a></h2>
-                            <div class="post_detail">
-                                {{ post.created_on.date }}</br>
-                                <div class="post_categories">
-                                    {% if post.categories.all %}
-                                        {% for category in post.categories.all %}
-                                            <a href="{% url 'viewBlogByCategory' category.name %}" data-anchor="category"> {{ category.name }}</a>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                    </div>
-                {% endfor %}
             </div>
         </div>
     </main>
@@ -53,7 +38,7 @@
                 let query = searchInput.value;
                 if (query.length < 3) return;
 
-                post_container.innerHTML = ''; 
+                post_container.innerHTML = '';
 
                 clearTimeout(debounceTimeout);
 
@@ -86,7 +71,7 @@
                                         </div>
                                     </div>
                                 </div>`;
-                            
+
                                 post_container.innerHTML += post;
                             }
                         });

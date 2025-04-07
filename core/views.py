@@ -70,10 +70,12 @@ def index(request):
 def viewBlogByCategory(request, category):
     pageNo = request.GET.get('page')
     posts = BlogPostService.getPostsByCategory(request.user, category, pageNo)
+    quote = fetchQuote()
 
     context = {
         "category": category,
         "posts": posts,
+        "quote": quote
     }
 
     return render(request, 'core/category.html', context)
@@ -145,9 +147,11 @@ def search(request):
         request_body = request.body.decode('utf-8')
         parsed_body = json.loads(request_body)
         query = parsed_body['search_query']
-        print(query)
 
         posts = BlogPost.objects.filter(title__icontains=query) or BlogPost.objects.filter(Q(body__icontains=query)) or BlogPost.objects.filter(Q(categories__name__icontains=query))
+
+        if not request.user.is_superuser:
+            posts = posts.filter(password_protect=False)
 
         results = []
         for post in posts:
@@ -159,7 +163,6 @@ def search(request):
             }
             results.append(post_data)
 
-        print(results)
         return JsonResponse({'results': results})
 
     quote = fetchQuote()
