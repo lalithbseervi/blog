@@ -46,12 +46,11 @@ def fetch(request):
 def index(request):
     pageNo = request.GET.get('page')
     is_mobile = is_mobile_device(request)
-    posts, paginator = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
+    posts = BlogPostService.getPosts(request.user, pageNo, 5 if is_mobile else 6)
     quote = fetchQuote()
 
     context = {
         'posts': posts,
-        'paginator': paginator,
         'quote': quote,
     }
 
