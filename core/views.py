@@ -56,12 +56,13 @@ def index(request):
     }
 
     if is_ajax(request):
-        data = {
-            'posts': render_to_string('core/components/partial_posts.html', context),
-            'pagination': render_to_string('core/components/pagination.html', context)
-        }
+        posts = render_to_string('core/components/partial_posts.html', context),
+        pagination = render_to_string('core/components/pagination.html', context)
 
-        return JsonResponse({data})
+        return JsonResponse({
+            'posts': posts,
+            'pagination': pagination
+        })
 
     response = render(request, 'core/index.html', context)
     return response
@@ -158,7 +159,7 @@ def search(request):
         query = parsed_body['search_query']
 
         try:
-            posts = BlogPost.objects.filter(Q(title__icontains=query)| Q(title__istartswith=query) | Q(body__icontains=query) | Q(categories__name__icontains=query) | Q(categories__name__istartswith=query))
+            posts = BlogPost.objects.filter(Q(title__iregex=query) | Q(body__icontains=query) | Q(categories__name__iregex=query))
             if not request.user.is_superuser:
                 posts = posts.filter(password_protect=False)
             posts = set(posts)

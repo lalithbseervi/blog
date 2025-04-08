@@ -78,11 +78,8 @@
                         postContainer.innerHTML = data.posts;
                         pagination.innerHTML = data.pagination;
 
-                    // Update the URL without reloading the page
-                    const newUrl = `?page=${pageNo}`;
-                    history.pushState({ page: pageNo }, `Page ${pageNo}`, newUrl);
-
-                    });
+                        bindPaginationLinks();
+                    }, isRequesting=false);
                 }
 
                 bindPaginationLinks();

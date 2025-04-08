@@ -28,17 +28,18 @@
             const url = window.location;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             let post_container = document.querySelector(".post_container");
-            let i, debounceTimeout;
+            let i, debounceTimeout, query;
 
-            searchInput.addEventListener('keyup', function(event) {
-                setTimeout(() => {}, 50);
-                const ignoredKeys = ['Alt', 'Control', 'Shift', 'Escape', 'Meta', 'ArrowUp', 'ArrowDown', 'Tab', 'Space', 'Backspace'];
+            searchInput.addEventListener('keydown', function(event) {
+                const ignoredKeys = ['Alt', 'Control', 'Shift', 'Escape', 'Meta', 'ArrowUp', 'ArrowDown', 'Tab', 'Space'];
                 if (ignoredKeys.includes(event.key)) return;
 
-                let query = searchInput.value;
+                setTimeout(() => {
+                    query = searchInput.value;
+                }, 1);
                 if (query.length < 3) return;
 
-                post_container.innerHTML = '';
+                post_container.innerHTML = `<h3 style="margin: 0;">Searching...</h3>`;
 
                 clearTimeout(debounceTimeout);
 
@@ -54,9 +55,10 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.results == "No posts found" || data.results.length < 1) {
-                            post_container.innerHTML = `<h3 style="color: #C6011F">No posts found :(</h3?`
+                            post_container.innerHTML = `<h3 style="color: #C6011F; margin: 0;">No posts found  :(</h3?`
                         }
                         else {
+                            post_container.innerHTML = `<h3 style="margin: 0;">${data.results.length} results for "${query}"</h3>`;
                             Object.entries(data).forEach(([key, ele]) => {
                                 for(i in ele) {
                                     const categories = ele[i].categories || [];
