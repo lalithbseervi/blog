@@ -18,7 +18,7 @@
             <div class="post_header">
                 <h1>{{ post.title }}</h1>
                     <div class="post_detail">
-                        {{ post.created_on.date }} | {% if request.user.is_superuser %}<a href="{% url 'editBlogPost' post.slug %}">Edit</a> | {% endif %} <a href="{{ share_link }}">Share</a></br>
+                        {{ post.created_on.date }} | {% if request.user.is_superuser %}<a href="{% url 'editBlogPost' post.slug %}">Edit</a> | {% endif %} <a href="{{ post.share_link }}">Share</a></br>
                         <div class="post_categories">
                             {% if post.categories.all %}
                                 {% for category in post.categories.all %}
