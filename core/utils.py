@@ -74,11 +74,12 @@ class BlogPostService:
         post = get_object_or_404(BlogPost, slug=slug)
         categories = post.categories.all()
 
-        for category in categories:
-            related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
-
-        if user.is_superuser is False:
-            related_posts.filter(password_protect=False)
+        if user.is_superuser:
+            for category in categories:
+                related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
+        else:
+            for category in categories:
+                related_posts = BlogPost.objects.filter(Q(categories=category) & Q(password_protect=False)).exclude(slug=slug)
 
         return related_posts
 
