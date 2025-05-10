@@ -72,14 +72,21 @@ class BlogPostService:
     @staticmethod
     def getRelatedPosts(user: User, slug) -> list:
         post = get_object_or_404(BlogPost, slug=slug)
-        categories = post.categories.all()
+        categories = set(post.categories.all())
+
+        related_posts = []
 
         if user.is_superuser:
             for category in categories:
-                related_posts = BlogPost.objects.filter(categories=category).exclude(slug=slug)
+                related_posts += BlogPost.objects.filter(categories__name__icontains=category).exclude(slug=slug)
         else:
             for category in categories:
-                related_posts = BlogPost.objects.filter(Q(categories=category) & Q(password_protect=False)).exclude(slug=slug)
+                related_posts += BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False)).exclude(slug=slug)
+
+        def longest_category_count(post):
+            return sum(1 for category in categories if category in post.categories.all())
+
+        related_posts.sort(key=longest_category_count, reverse=True)
 
         return related_posts
 
