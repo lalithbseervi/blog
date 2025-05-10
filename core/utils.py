@@ -69,23 +69,33 @@ class BlogPostService:
             postsPage.adjusted_elided_pages = paginatorInstance.get_elided_page_range(pageNo)
         return postsPage
 
+
+    """Get posts related to the post having the given slug."""
     @staticmethod
     def getRelatedPosts(user: User, slug) -> list:
+        # get the original post and all its categories
         post = get_object_or_404(BlogPost, slug=slug)
-        categories = set(post.categories.all())
+        categories = set(post.categories.all()) # using set to avoid duplicates
 
-        related_posts = []
+        related_posts = set() # using set again to avoid duplicates
 
+        # if req is made by superuser, private posts should also be shown
+        # else, only public posts should be included
         if user.is_superuser:
             for category in categories:
-                related_posts += BlogPost.objects.filter(categories__name__icontains=category).exclude(slug=slug)
+                related_posts.update(BlogPost.objects.filter(categories__name__icontains=category).exclude(slug=slug))
         else:
             for category in categories:
-                related_posts += BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False)).exclude(slug=slug)
+                related_posts.update(BlogPost.objects.filter(Q(categories__name__icontains=category) & Q(password_protect=False)).exclude(slug=slug))
 
+        # convert `related_posts` to list in order to use `sort()`
+        related_posts = list(related_posts)
+
+        # get the max no of categories 
         def longest_category_count(post):
             return sum(1 for category in categories if category in post.categories.all())
 
+        # sort such that the posts matching most closely to the original post rank higher
         related_posts.sort(key=longest_category_count, reverse=True)
 
         return related_posts
