@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Node, Link
-
+import json
 # Create your views here.
 def index(request):
     key = request.GET.get('key')
@@ -13,6 +14,14 @@ def index(request):
     
     return render(request, 'tsm/index.html')
 
+def profile(request):
+    id = request.GET.get('id')
+
+    node = Node.objects.get(id=id)
+    attributes = node.attributes.all()
+
+    return render(request, 'tsm/profile.html', context = { 'name': id, 'attributes': attributes })
+
 def serialize_network_data(request):
     nodes = []
     links = []
@@ -21,12 +30,14 @@ def serialize_network_data(request):
     total_links = Link.objects.all()
 
     for node in total_nodes:
+        rel_info = node.tooltip_info
         node_dict = {
             "id": node.id,
             "rel": node.rel,
             "marker": {
                 "radius": radius(node)
             },
+            "rel_info": rel_info
         }
 
         for attr in node.attributes.all():

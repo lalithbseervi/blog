@@ -28,35 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tooltip: {
                 formatter: function () {
-                    let info = '';
-                    switch (this.rel) {
-                        case 'self':
-                            info = 'is you';
-                            break;
-                        case 'brother':
-                            info = 'is your brother';
-                            break;
-                        case 'father':
-                            info = 'is your father';
-                            break;
-                        case 'mother':
-                            info = 'is your mother';
-                            break;
-                        case 'grandmother':
-                            info = 'is your grandmother';
-                            break;
-                        case 'grandfather':
-                            info = 'is your grandfather';
-                            break;
-                        case 'badapappa':
-                            info = 'is your badapappa';
-                            break;
-                        case 'acquaintance_m':
-                            info = 'is your mutual acquaintance';
-                            break;
-                    }
-
-                    return '<b>' + this.key + '</b> ' + info;
+                    return '<b>' + this.key + '</b> ' + this.point.rel_info;
                 }
             },
 
@@ -64,9 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 networkgraph: {
                     keys: ['from', 'to'],
                     layoutAlgorithm: {
-                        enableSimulation: true,
+                        enableSimulation: false,
                         integration: 'verlet',
                         linkLength: 100
+                    },
+                    point: {
+                        events: {
+                            click(e) {
+                                handlePointClick(e);
+                            }
+                        }
                     }
                 }
             },
@@ -92,3 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(error => console.error('Error fetching graph data:', error));
 })
+
+function handlePointClick(e) {
+    const url = `${window.location.protocol}//${window.location.host}/tsm/profile?id=${encodeURIComponent(e.point.id)}`;
+    window.location.replace(url);
+}

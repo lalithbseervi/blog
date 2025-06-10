@@ -9,6 +9,20 @@ class Node(models.Model):
     def __str__(self):
         return self.id
     
+    @property
+    def tooltip_info(self):
+        rel_map = {
+            'self': 'is you',
+            'brother': 'is your brother',
+            'father': 'is your father',
+            'mother': 'is your mother',
+            'grandmother': 'is your grandmother',
+            'grandfather': 'is your grandfather',
+            'badapappa': 'is your badapappa',
+            'acquaintance_m': 'is your mutual acquaintance',
+        }
+        return rel_map.get(self.rel, 'has unknown relation')
+    
 class NodeAttribute(models.Model):
     node = models.ForeignKey(Node, related_name='attributes', on_delete=models.CASCADE)
     key = models.CharField(max_length=128)
