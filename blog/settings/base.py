@@ -29,6 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 INSTALLED_APPS = [
     'core.apps.CoreConfig',
+    'tsm.apps.TsmConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

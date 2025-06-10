@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
-                ('body', models.TextField),
+                ('body', models.TextField()),
                 ('created_on', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
                 ('share_token', models.UUIDField(default=uuid.uuid4, editable=False, null=True, unique=True)),
