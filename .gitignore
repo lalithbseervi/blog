@@ -9,3 +9,5 @@ db.sqlite3
 settings
 settings/*
 core/doc
+run.py
+*.txt

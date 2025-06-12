@@ -1,17 +1,3 @@
-// let network_data = fetch('api/network-data/')
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log(`nodes: ${data.nodes}`);
-//     console.log(`links: ${data.links}`);
-    
-//     let nodes = data.nodes;
-//     let links = data.links;
-//   })
-//   .catch(error => console.error('Error fetching graph data:', error));
-
-// console.log(`nodes: ${network_data.nodes}`);
-// console.log(`links: ${network_data.links}`);
-
 document.addEventListener('DOMContentLoaded', () => {
     fetch('api/network-data/')
     .then(response => response.json())
@@ -19,11 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
             Highcharts.chart('container', {
             chart: {
                 type: 'networkgraph',
-                marginTop: 80
+                marginTop: 80,
+                style: {
+                    fontSize: '115%',
+                },
             },
 
             title: {
-                text: 'Network Graph - Lalith B Seervi'
+                text: 'Network Graph'
             },
 
             tooltip: {
@@ -38,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     layoutAlgorithm: {
                         enableSimulation: false,
                         integration: 'verlet',
-                        linkLength: 100
+                        linkLength: 150
                     },
                     point: {
                         events: {
@@ -69,10 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         });
     })
-    .catch(error => console.error('Error fetching graph data:', error));
+    .catch(error => console.error('Error fetching graph data: ', error));
 })
 
 function handlePointClick(e) {
-    const url = `${window.location.protocol}//${window.location.host}/tsm/profile?id=${encodeURIComponent(e.point.id)}`;
+    const url = `${window.location.protocol}//${window.location.host}/tsm/profile/${encodeURIComponent(e.point.id)}`;
     window.location.replace(url);
 }

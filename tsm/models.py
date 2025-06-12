@@ -2,9 +2,10 @@ from django.db import models
 
 # Create your models here.
 class Node(models.Model):
-    id = models.CharField(primary_key=True, max_length=128)
+    id = models.CharField(primary_key=True, max_length=256)
     rel = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
+    node_type = models.CharField(max_length=256)
 
     def __str__(self):
         return self.id
@@ -20,6 +21,8 @@ class Node(models.Model):
             'grandfather': 'is your grandfather',
             'badapappa': 'is your badapappa',
             'acquaintance_m': 'is your mutual acquaintance',
+            'puc': 'is where you completed PUC',
+            'home': 'is your permanent residence'
         }
         return rel_map.get(self.rel, 'has unknown relation')
     
