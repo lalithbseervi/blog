@@ -5,11 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
             Highcharts.chart('container', {
             chart: {
                 type: 'networkgraph',
-                marginTop: 80,
                 style: {
                     fontSize: '115%',
                 },
-                height: (1 / 3 * 100) + '%',
+                height: (6 / 13 * 100) + '%',
             },
 
             title: {
