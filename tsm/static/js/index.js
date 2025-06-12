@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             plotOptions: {
                 networkgraph: {
+                    draggable: false,
                     keys: ['from', 'to'],
                     layoutAlgorithm: {
                         enableSimulation: false,
@@ -31,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     point: {
                         events: {
-                            click(e) {
-                                handlePointClick(e);
+                            click() {
+                                collapseNode(this);
                             }
                         }
                     }
@@ -55,13 +56,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data.links,
                     nodes: data.nodes
                 }
-            ]
+            ],
         });
     })
     .catch(error => console.error('Error fetching graph data: ', error));
 })
 
-function handlePointClick(e) {
-    const url = `${window.location.protocol}//${window.location.host}/tsm/profile/${encodeURIComponent(e.point.id)}`;
-    window.location.replace(url);
+document.addEventListener('contextmenu', (e) => {
+    if (e.button == 2) {
+        e.preventDefault();
+        const url = `${window.location.protocol}//${window.location.host}/tsm/profile/${encodeURIComponent(e.target.point.id)}`;
+        window.location.replace(url);
+    }
+});
+
+const collapseNode = (node, visible = false) => {
+    const setVisibility = (hide) => {
+    const display = hide ? 'none' : 'block';
+    
+    node.linksFrom.forEach(link => {
+      hide ? link.graphic.hide() : link.graphic.show();
+      link.toNode.graphic.css({
+        display: display
+      });
+      link.toNode.dataLabel.css({
+        display: display
+      });
+
+      if (hide)
+        collapseNode(link.toNode, true);
+    });
+    node.childNodesVisible = hide ? false : true;
+  }
+
+  if (visible)
+    node.childNodesVisible = true;
+
+  if (node.linksFrom) {
+    setVisibility(node.childNodesVisible ? true : false);
+  }
 }
