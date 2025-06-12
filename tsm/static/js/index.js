@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 style: {
                     fontSize: '115%',
                 },
+                height: (1 / 3 * 100) + '%',
             },
 
             title: {
