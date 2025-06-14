@@ -6,7 +6,7 @@
     <title>Add Link</title>
 </head>
 <body>
-    <form method = "post">
+    <form method="post" action="{% url 'add_link' %}">
         {% csrf_token %}
         {{ form.as_p }}
         {{ form.media }}

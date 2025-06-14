@@ -6,7 +6,7 @@
     <title>Add Node Attribute</title>
 </head>
 <body>
-    <form method = "post">
+    <form method="post" action="{% url 'add_node_attr'%}">
         {% csrf_token %}
         {{ form.as_p }}
         {{ form.media }}

@@ -9,7 +9,88 @@
     <script src="{% static 'js/networkgraph.js' %}"></script>
     <script type="module" src="{% static 'js/index.js' %}"></script>
 </head>
+<style>
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+        max-width: 17rem;
+    }
+
+    li {
+        float: right;
+    }
+
+    li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 0.1rem 0.1rem;
+        text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+        background-color: #111;
+    }
+
+    .active {
+        background-color: #04AA6D;
+    }
+</style>
 <body>
     <div id="container"></div>
+    <div id="forms">
+        <ul>
+            <li><button type="button" data-id="node">Add Node</button></li>
+            <li><button type="button" data-id="nodeAttr">Add Node Attributes</button></li>
+            <li><button type="button" data-id="link">Add Link</button></li>
+        </ul>
+        <div id="form_container"></div>
+    </div>
+
+    <script>
+        document.addEventListener('click', (e) => {
+            if (e.target.dataset) {
+                let data = e.target.dataset.id;
+                let form_container = document.querySelector('#form_container');
+                switch (data) {
+                    case 'node':
+                        url = 'add_node'; 
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            }
+                        }).then(response => response.json())
+                        .then(data => form_container.innerHTML = data.form)
+                        break;
+                    case 'nodeAttr':
+                        url = 'add_node_attr'; 
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            }
+                        }).then(response => response.json())
+                        .then(data => form_container.innerHTML = data.form)
+                        break;
+                    case 'link':
+                        url = 'add_link'; 
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            }
+                        }).then(response => response.json())
+                        .then(data => form_container.innerHTML = data.form)
+                        break;
+                    default:
+                        break;
+                };
+            }
+        })
+    </script>   
 </body>
 </html>

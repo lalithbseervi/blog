@@ -44,6 +44,7 @@ class NodeAttribute(models.Model):
 class Link(models.Model):
     source = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='source_rels')
     target = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='target_rels')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.source.id} -> {self.target.id}"

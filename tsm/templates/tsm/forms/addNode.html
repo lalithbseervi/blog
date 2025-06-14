@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Node</title>
-</head>
-<body>
-    <form method="post">
+    <form method="post" action="{% url 'add_node' %}">
         {% csrf_token %}
         {{ form.as_p }}
         {{ form.media }}
         <p> <input type="submit" value="Add Node"> </p>
     </form>
-</body>
-</html>

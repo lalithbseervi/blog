@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponseForbidden, HttpResponseServerError
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, HttpResponseServerError
+from django.template.loader import render_to_string
 
 from .models import Node, Link
 from .forms import NodeForm, NodeAttrForm, LinkForm
+from .utils import serialize_network_data
+from core.utils import is_ajax
 import json
 # Create your views here.
 def index(request):
@@ -24,9 +26,13 @@ def addNode(request):
 
         if form.is_valid():
             post = form.save()
-        return redirect('index')
+            return HttpResponse(status=204)
+        # return redirect('index')
     else:
         form = NodeForm()
+        if is_ajax(request):
+            form = render_to_string('tsm/forms/addNode.html', {'form': form}, request=request)
+            return JsonResponse({'form': form})
     return render(request, 'tsm/forms/addNode.html', {'form': form})
 
 def addNodeAttr(request):
@@ -38,9 +44,13 @@ def addNodeAttr(request):
             node = Node.objects.get(id=id)
             print(f"node_id: {node.id}")
             form.save()
-        return redirect('profile', id=node.id)
+            return HttpResponse(status=204)
+        # return redirect('profile', id=node.id)
     else:
         form = NodeAttrForm()
+        if is_ajax(request):
+            form = render_to_string('tsm/forms/addNodeAttr.html', {'form': form}, request=request)
+            return JsonResponse({'form': form})
     return render(request, 'tsm/forms/addNodeAttr.html', {'form': form})
 
 def addLink(request):
@@ -49,72 +59,21 @@ def addLink(request):
 
         if form.is_valid:
             form.save()
-        return redirect('index')
+            return HttpResponse(status=204)
+        # return redirect('index')
     else:
         form = LinkForm()
+        if is_ajax(request):
+            form = render_to_string('tsm/forms/addLink.html', {'form': form}, request=request)
+            return JsonResponse({'form': form})
     return render(request, 'tsm/forms/addLink.html', {'form': form})
 
-def serialize_network_data(request):
-    nodes = []
-    links = []
+## API Definitions
 
-    total_nodes = Node.objects.prefetch_related('attributes')
-    total_links = Link.objects.all()
-
-    for node in total_nodes:
-        node_dict = {
-            "id": node.id,
-            "rel": node.rel,
-            "color": color(node),
-            "marker": {
-                "radius": radius(node),
-                "symbol": symbol(node),
-            },
-            "rel_info": node.tooltip_info,
-            "node_type": node.node_type
-        }
-
-        for attr in node.attributes.all():
-            node_dict[attr.key] = attr.value()
-        
-        nodes.append(node_dict)
-
-    for link in total_links:
-        link_arr = [f'{link.source}', f'{link.target}']
-        links.append(link_arr)
-    
-    return {
-        "nodes": nodes,
-        "links": links
-    }
-
-def radius(node):
-    return 30 + node.attributes.count() * 5
-
-def symbol(node):
-    node_type = node.node_type
-
-    symbol = {
-        'apartment': 'diamond',
-        'organization': 'square',
-        # 'person': 'circle'
-    }
-
-    return symbol.get(node_type, 'circle')
-
-def color(node):
-    node_type = node.node_type
-
-    colors = {
-        'immediate_family': '#2caffe',
-        'extended_family': '#2cbfff',
-        'organization': 'red',
-        'apartment': 'yellow'
-    }
-
-    return colors.get(node_type, 'grey')
-
-def send_network_data(request):
+def send_network_data(request, *args):
+    '''
+        API definition to send serialised network graph data (nodes, node attributes, and links)
+    '''
     if request.user.is_superuser:
         data = serialize_network_data(request)
         return JsonResponse(data, safe=False)

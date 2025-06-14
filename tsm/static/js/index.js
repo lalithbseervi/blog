@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('api/network-data/')
     .then(response => response.json())
     .then(data => {
-            Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 type: 'networkgraph',
                 style: {
@@ -60,39 +60,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })
     .catch(error => console.error('Error fetching graph data: ', error));
-})
+});
 
-document.addEventListener('contextmenu', (e) => {
+let chart = document.querySelector('#container');
+
+chart.addEventListener('contextmenu', (e) => {
     if (e.button == 2) {
-        e.preventDefault();
-        const url = `${window.location.protocol}//${window.location.host}/tsm/profile/${encodeURIComponent(e.target.point.id)}`;
-        window.location.replace(url);
+        if (e.target.point) {
+            e.preventDefault();
+            const url = `${window.location.protocol}//${window.location.host}/tsm/profile/${encodeURIComponent(e.target.point.id)}`;
+            window.location.replace(url);
+        }
     }
 });
 
 const collapseNode = (node, visible = false) => {
     const setVisibility = (hide) => {
-    const display = hide ? 'none' : 'block';
-    
-    node.linksFrom.forEach(link => {
-      hide ? link.graphic.hide() : link.graphic.show();
-      link.toNode.graphic.css({
-        display: display
-      });
-      link.toNode.dataLabel.css({
-        display: display
-      });
+        const display = hide ? 'none' : 'block';
+        
+        node.linksFrom.forEach(link => {
+            hide ? link.graphic.hide() : link.graphic.show();
+            link.toNode.graphic.css({
+                display: display
+            });
+            link.toNode.dataLabel.css({
+                display: display
+            });
 
-      if (hide)
-        collapseNode(link.toNode, true);
-    });
-    node.childNodesVisible = hide ? false : true;
-  }
+            if (hide)
+                collapseNode(link.toNode, true);
+        });
+        node.childNodesVisible = hide ? false : true;
+    }
 
-  if (visible)
-    node.childNodesVisible = true;
+    if (visible)
+        node.childNodesVisible = true;
 
-  if (node.linksFrom) {
-    setVisibility(node.childNodesVisible ? true : false);
-  }
+    if (node.linksFrom) {
+        setVisibility(node.childNodesVisible ? true : false);
+    }
 }
