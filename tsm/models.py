@@ -22,6 +22,8 @@ class Node(models.Model):
             'badapappa': 'is your badapappa',
             'acquaintance': 'is your acquaintance',
             'acquaintance_m': 'is your mutual acquaintance',
+            'neighbour': 'is your neighbour',
+            'school': 'is where you completed SSLC',
             'puc': 'is where you completed PUC',
             'home': 'is your permanent residence'
         }

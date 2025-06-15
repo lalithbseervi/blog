@@ -5,6 +5,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'networkgraph',
+                events: {
+                    load() {
+                        const chart = this;
+                        let points = chart.series[0].points;
+
+                        points.forEach(point => {
+                            point.graphic.hide();
+
+                            point.toNode.graphic.css({
+                                display: 'none'
+                            });
+                            
+                            point.toNode.dataLabel.css({
+                                display: 'none'
+                            });
+                        });
+                    }
+                },
                 style: {
                     fontSize: '115%',
                 },
