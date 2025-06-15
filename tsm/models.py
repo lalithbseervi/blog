@@ -20,6 +20,7 @@ class Node(models.Model):
             'grandmother': 'is your grandmother',
             'grandfather': 'is your grandfather',
             'badapappa': 'is your badapappa',
+            'acquaintance': 'is your acquaintance',
             'acquaintance_m': 'is your mutual acquaintance',
             'puc': 'is where you completed PUC',
             'home': 'is your permanent residence'

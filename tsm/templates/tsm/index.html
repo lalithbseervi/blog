@@ -41,6 +41,7 @@
 </style>
 <body>
     <div id="container"></div>
+    {% if request.user.is_superuser %}
     <div id="forms">
         <ul>
             <li><button type="button" data-id="node">Add Node</button></li>
@@ -92,5 +93,6 @@
             }
         })
     </script>   
+    {% endif %}
 </body>
 </html>
